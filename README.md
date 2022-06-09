@@ -14,7 +14,7 @@ git clone https://github.com/Mike-J-W/EveryAction-Exercise.git
 
 cd EveryAction-Exercise
 
-echo "<your api key>" > .env
+echo "MIKES_API_KEY=<your api key>" > .env
 
 python3 pip install -r requirements.txt
 
