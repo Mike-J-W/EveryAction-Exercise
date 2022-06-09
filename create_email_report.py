@@ -56,7 +56,7 @@ def get_top_variant(email_id: int, variants: dict) -> str:
         variant_recipients = variant_stats['recipients']
         variant_opens = variant_stats['opens']
         variant_ratio = variant_opens / variant_recipients
-        if variant_ratio > top_ratio or 
+        if variant_ratio > top_ratio or \
                 (variant_ratio == top_ratio and variant_recipients > top_recipients):
             top_variant = variant['name']
             top_ratio = variant_ratio
