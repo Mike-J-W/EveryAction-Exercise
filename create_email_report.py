@@ -1,3 +1,4 @@
+import argparse
 import csv
 import json
 import os
@@ -5,6 +6,8 @@ import requests
 import sys
 import traceback
 from dotenv import load_dotenv
+
+VERBOSE = False
 
 
 def get_api_key() -> None:
@@ -51,21 +54,33 @@ def get_top_variant(email_id: int, variants: dict) -> str:
     top_variant = ''
     top_ratio = 0.0
     top_recipients = 0
+    if VERBOSE:
+        print("-"*60)
+        print('Email ID: ', email_id)
     for variant in variants:
         variant_stats = get_variant_stats(email_id, variant['emailMessageVariantId'])
         variant_recipients = variant_stats['recipients']
         variant_opens = variant_stats['opens']
         variant_ratio = variant_opens / variant_recipients
+        if VERBOSE:
+            print('TOP', top_variant, '||', top_ratio, '||', top_recipients)
+            print('VAR', variant['name'], '||', variant_ratio, '||', variant_recipients)
         if variant_ratio > top_ratio or \
                 (variant_ratio == top_ratio and variant_recipients > top_recipients):
             top_variant = variant['name']
             top_ratio = variant_ratio
             top_recipients = variant_recipients
+    if VERBOSE:
+        print('WIN', top_variant, '||', top_ratio, '||', top_recipients)
     return top_variant
 
 
-def main() -> int:
+def main(be_verbose: bool) -> int:
     try:
+        # Set verbosity
+        if be_verbose:
+            global VERBOSE
+            VERBOSE = True
         # Load the API key
         get_api_key()
         # Get and sort the email ids
@@ -96,4 +111,8 @@ def main() -> int:
 
 
 if __name__ == '__main__':
-    sys.exit(main()) 
+    parser = argparse.ArgumentParser(
+        description="This script will generate a report of Emails and their top Variants.")
+    parser.add_argument('-v', '--verbose', action='store_true', default=False)
+    args = parser.parse_args()
+    sys.exit(main(args.verbose)) 
